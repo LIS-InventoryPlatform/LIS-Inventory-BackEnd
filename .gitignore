@@ -1,4 +1,15 @@
-# Compiled class file
+# ---- Secrets & environment ----
+.env
+*.env
+application-local.yml
+application-local.properties
+GoogleWorkSpaceDatos.json
+
+# ---- macOS ----
+.DS_Store
+**/.DS_Store
+
+# ---- Compiled class file ----
 *.class
 
 # Log file

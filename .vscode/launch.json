@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "LisInventoryApplication (local)",
+      "request": "launch",
+      "mainClass": "com.lis.inventory.LisInventoryApplication",
+      "projectName": "inventory-backend",
+      "vmArgs": "-Dspring.profiles.active=local"
+    }
+  ]
+}

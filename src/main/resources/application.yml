@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: lis-inventory-backend
+
+  datasource:
+    url:                  ${DB_URL:jdbc:postgresql://localhost:5432/lis_inventory}
+    username:             ${DB_USERNAME:postgres}
+    password:             ${DB_PASSWORD:postgres}
+    driver-class-name:    org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+auth0:
+  domain:        https://udea-app.us.auth0.com
+  jwks-uri:      https://udea-app.us.auth0.com/.well-known/jwks.json
+  issuer-uri:    https://udea-app.us.auth0.com/
+  audience:      https://udea-webapi.com
+  client-id:     XIjZ6iij7NI5BJlg7NVdxvwraVbv6h3q
+  client-secret: ${AUTH0_CLIENT_SECRET:}
+
+app:
+  jwt:
+    secret:         ${APP_JWT_SECRET:}
+    expiration-ms:  86400000
+
+logging:
+  level:
+    com.lis.inventory: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
