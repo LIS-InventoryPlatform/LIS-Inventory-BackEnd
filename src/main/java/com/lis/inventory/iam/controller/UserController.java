@@ -1,15 +1,19 @@
 package com.lis.inventory.iam.controller;
 
 import com.lis.inventory.iam.dto.AssignRoleDTO;
+import com.lis.inventory.iam.dto.SessionInfoDTO;
 import com.lis.inventory.iam.dto.UserResponseDTO;
 import com.lis.inventory.iam.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +25,23 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    /**
+     * Retorna la información de sesión del usuario autenticado.
+     * Solo el propio usuario puede consultar su sesión; no requiere permiso adicional.
+     * Rechaza el acceso si el token es inválido, está expirado o el usuario está inactivo.
+     */
+    @GetMapping("/me")
+    @Operation(summary = "Obtener información de sesión del usuario autenticado")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Información de sesión obtenida exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Usuario inactivo"),
+            @ApiResponse(responseCode = "401", description = "Token inválido o expirado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado en la plataforma")
+    })
+    public ResponseEntity<SessionInfoDTO> getMySession(@AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(userService.getMySession(jwt.getSubject()));
+    }
 
     @GetMapping
     @PreAuthorize("hasAuthority('users:read')")

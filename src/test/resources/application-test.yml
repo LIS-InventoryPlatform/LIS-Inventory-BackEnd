@@ -11,3 +11,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+
+app:
+  jwt:
+    secret: dGVzdC1zZWNyZXQta2V5LWZvci1saXMtaW52ZW50b3J5LXRlc3Rpbmctb25seQ==
+    expiration-ms: 3600000
