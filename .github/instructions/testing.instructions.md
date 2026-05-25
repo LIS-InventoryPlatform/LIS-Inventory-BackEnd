@@ -3,7 +3,13 @@ applyTo: "**"
 ---
 # Harness de Testing — LIS-InventoryPlatform
 
-Cuando recibas una User Story implementada, genera los tests correspondientes:
+## ANTES DE GENERAR CUALQUIER TEST
+1. Analiza las clases existentes en el repo antes de escribir algo nuevo
+2. Revisa los tests existentes en src/test/ como referencia de patrones ya usados
+3. No dupliques clases de test que ya existan, agrégale los métodos faltantes
+4. No inventes dependencias, imports o clases que no existan en el proyecto
+5. Si necesitas información que no encuentras en el repo, pregunta antes de asumir
+6. Respeta los nombres de paquetes, clases y métodos ya existentes
 
 ## BACKEND — Spring Boot
 
