@@ -1,12 +1,14 @@
 package com.lis.inventory.iam.service;
 
 import com.lis.inventory.iam.dto.AssignRoleDTO;
+import com.lis.inventory.iam.dto.RegisterUserRequestDTO;
 import com.lis.inventory.iam.dto.SessionInfoDTO;
 import com.lis.inventory.iam.dto.UserResponseDTO;
 import com.lis.inventory.iam.entity.AppUser;
 import com.lis.inventory.iam.entity.Role;
 import com.lis.inventory.iam.repository.RoleRepository;
 import com.lis.inventory.iam.repository.UserRepository;
+import com.lis.inventory.shared.exception.ResourceAlreadyExistsException;
 import com.lis.inventory.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,37 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
+    private static final String ALLOWED_DOMAIN = "@udea.edu.co";
+
+    @Transactional
+    public UserResponseDTO registerUser(RegisterUserRequestDTO dto) {
+        if (!dto.getEmail().endsWith(ALLOWED_DOMAIN)) {
+            throw new IllegalArgumentException(
+                    "El correo debe pertenecer al dominio " + ALLOWED_DOMAIN);
+        }
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new ResourceAlreadyExistsException(
+                    "Ya existe un usuario registrado con el correo: " + dto.getEmail());
+        }
+
+        Long roleId = dto.getRoleId();
+        Role role = null;
+        if (roleId != null) {
+            role = roleRepository.findById(roleId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Rol", roleId));
+        }
+
+        AppUser user = AppUser.builder()
+                .email(dto.getEmail())
+                .fullName(dto.getFullName())
+                .role(role)
+                .active(true)
+                .build();
+
+        AppUser saved = userRepository.save(user);
+        return toDTO(saved);
+    }
 
     public List<UserResponseDTO> findAll() {
         return userRepository.findAll().stream()

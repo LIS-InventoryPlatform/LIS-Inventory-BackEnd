@@ -1,6 +1,7 @@
 package com.lis.inventory.iam.controller;
 
 import com.lis.inventory.iam.dto.AssignRoleDTO;
+import com.lis.inventory.iam.dto.RegisterUserRequestDTO;
 import com.lis.inventory.iam.dto.SessionInfoDTO;
 import com.lis.inventory.iam.dto.UserResponseDTO;
 import com.lis.inventory.iam.service.UserService;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,6 +43,20 @@ public class UserController {
     })
     public ResponseEntity<SessionInfoDTO> getMySession(@AuthenticationPrincipal Jwt jwt) {
         return ResponseEntity.ok(userService.getMySession(jwt.getSubject()));
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('users:write')")
+    @Operation(summary = "Registrar un usuario institucional en el sistema local")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Correo inválido, fuera de dominio institucional o usuario duplicado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos suficientes"),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado")
+    })
+    public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody RegisterUserRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.registerUser(dto));
     }
 
     @GetMapping
